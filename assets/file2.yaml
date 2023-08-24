@@ -1,0 +1,172 @@
+---
+# Source: assets/templates/pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: release-name-assets
+  labels:
+    app.kuberneres.io/owner: retail-store-sample
+    app.kubernetes.io/component: service
+    app.kubernetes.io/instance: assets
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: assets
+    helm.sh/chart: assets-0.0.1
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+    app.kuberneres.io/owner: retail-store-sample
+    app.kubernetes.io/component: service
+    app.kubernetes.io/instance: assets
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: assets
+    helm.sh/chart: assets-0.0.1
+---
+# Source: assets/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: release-name-assets
+  labels:
+    app.kuberneres.io/owner: retail-store-sample
+    app.kubernetes.io/component: service
+    app.kubernetes.io/instance: assets
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: assets
+    helm.sh/chart: assets-0.0.1
+---
+# Source: assets/templates/cm.yaml
+# Source: assets/templates/configmap.yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: release-name-assets
+data:
+  PORT: "8080"
+---
+# Source: assets/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-assets
+  labels:
+    app.kuberneres.io/owner: retail-store-sample
+    app.kubernetes.io/component: service
+    app.kubernetes.io/instance: assets
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: assets
+    helm.sh/chart: assets-0.0.1
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kuberneres.io/owner: retail-store-sample
+    app.kubernetes.io/component: service
+    app.kubernetes.io/instance: assets
+    app.kubernetes.io/name: assets
+---
+# Source: assets/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-assets
+  labels:
+    app.kuberneres.io/owner: retail-store-sample
+    app.kubernetes.io/component: service
+    app.kubernetes.io/instance: assets
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: assets
+    helm.sh/chart: assets-0.0.1
+spec:
+  strategy:
+    rollingUpdate:
+       maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+    app.kuberneres.io/owner: retail-store-sample
+    app.kubernetes.io/component: service
+    app.kubernetes.io/instance: assets
+    app.kubernetes.io/name: assets
+  template:
+    metadata:
+      labels:
+    app.kuberneres.io/owner: retail-store-sample
+    app.kubernetes.io/component: service
+    app.kubernetes.io/instance: assets
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: assets
+    helm.sh/chart: assets-0.0.1
+    spec:
+      serviceAccountName: release-name-assets
+      securityContext:
+        {}
+      containers:
+        - name: assets
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: false
+          image: "public.ecr.aws/aws-containers/retail-store-sample-assets:0.4.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health.html
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 3
+          resources:
+            limits:
+              memory: 128Mi
+            requests:
+              cpu: 128m
+              memory: 128Mi
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp-volume
+      volumes:
+            - emptyDir:
+                medium: Memory
+              name: tmp-volume
+---
+# Source: assets/templates/hpa.yaml
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: release-name-assets
+  labels:
+    app.kuberneres.io/owner: retail-store-sample
+    app.kubernetes.io/component: service
+    app.kubernetes.io/instance: assets
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: assets
+    helm.sh/chart: assets-0.0.1
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: release-name-assets  
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80

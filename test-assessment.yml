@@ -1,0 +1,41 @@
+ ns 
+
+ui:
+  - sa (2)
+  - cm (2)
+  - svc (2)
+  - deploy (2) # -hpa
+
+assets:
+  - sa 
+  - cm 
+  - svc 
+  - deploy # -hpa
+
+carts:
+  - sa 
+  - cm 
+  - svc (2)
+  - deploy (2) # -hpa
+
+catalog:
+  - sa (2)
+  - cm (2)
+  - svc (2)
+  - deploy (2) # -hpa
+  - sts (2) # -hpa
+  - secret (2)
+
+checkout:
+  - sa 
+  - cm 
+  - svc (2)
+  - deploy (2) # -hpa
+
+orders:
+   - sa 
+  - cm 
+  - svc (2)
+  - deploy  # -hpa
+  - sts (2) # -hpa
+  - secret (2) 

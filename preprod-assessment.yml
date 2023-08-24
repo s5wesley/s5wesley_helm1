@@ -1,0 +1,49 @@
+ns 
+pdb
+ingress
+role
+rb
+cr
+crb
+np 
+
+
+ui:
+  - sa (2)
+  - cm (2)
+  - svc (2)
+  - deploy (2)
+
+assets:
+  - sa 
+  - cm 
+  - svc 
+  - deploy 
+
+carts:
+  - sa 
+  - cm 
+  - svc (2)
+  - deploy (2) 
+
+catalog:
+  - sa (2)
+  - cm (2)
+  - svc (2)
+  - deploy (2)
+  - sts (2)
+  - secret (2)
+
+checkout:
+  - sa 
+  - cm 
+  - svc (2)
+  - deploy (2) 
+
+orders:
+   - sa 
+  - cm 
+  - svc (2)
+  - deploy 
+  - sts (2)
+  - secret (2) 

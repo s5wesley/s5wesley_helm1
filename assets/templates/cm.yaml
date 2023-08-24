@@ -1,0 +1,7 @@
+# Source: assets/templates/configmap.yml
+apiVersion: {{ .Values.service.apiVersion }}
+kind: ConfigMap
+metadata:
+  name: {{ include "assets.fullname" . }}
+data:
+  PORT: {{ .Values.service.data.PORT | quote  }}
